@@ -1,0 +1,410 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AVM Library Book Finder</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #263238;
+        }
+
+        header {
+            background: #173b67;
+            color: white;
+            padding: 22px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        header h1 {
+            font-size: 25px;
+        }
+
+        header p {
+            margin-top: 6px;
+            color: #dce8f7;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #173b67, #3978a8);
+            color: white;
+            text-align: center;
+            padding: 55px 20px;
+        }
+
+        .hero h2 {
+            font-size: 34px;
+            margin-bottom: 12px;
+        }
+
+        .hero p {
+            margin-bottom: 25px;
+        }
+
+        .search-box {
+            max-width: 650px;
+            margin: auto;
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-box input {
+            flex: 1;
+            min-width: 0;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            border-radius: 7px;
+            padding: 12px 18px;
+            background: #f5a623;
+            color: #172b43;
+            font-weight: bold;
+        }
+
+        button:hover {
+            opacity: 0.88;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: auto;
+            padding: 35px 20px;
+        }
+
+        .section-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 22px;
+        }
+
+        .section-heading h2 {
+            color: #173b67;
+        }
+
+        #category {
+            padding: 11px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            background: white;
+        }
+
+        #bookCount {
+            margin-bottom: 20px;
+            color: #5d6875;
+        }
+
+        .book-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 22px;
+        }
+
+        .book-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s;
+        }
+
+        .book-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .book-cover {
+            height: 165px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #e0ebf7;
+            font-size: 65px;
+        }
+
+        .book-info {
+            padding: 20px;
+        }
+
+        .book-info h3 {
+            color: #173b67;
+            margin-bottom: 10px;
+        }
+
+        .book-info p {
+            margin-bottom: 9px;
+            color: #596575;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .category-tag {
+            display: inline-block;
+            background: #e6f4ea;
+            color: #237342;
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-bottom: 12px;
+        }
+
+        .availability {
+            color: #237342 !important;
+            font-weight: bold;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 45px 15px;
+            background: white;
+            border-radius: 10px;
+            grid-column: 1 / -1;
+        }
+
+        footer {
+            text-align: center;
+            background: #173b67;
+            color: white;
+            padding: 22px;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 600px) {
+            header {
+                padding: 20px;
+            }
+
+            .hero h2 {
+                font-size: 27px;
+            }
+
+            .search-box {
+                flex-direction: column;
+            }
+
+            .search-box button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div>
+            <h1>📚 AVM Library</h1>
+            <p>Your gateway to knowledge</p>
+        </div>
+        <div>Library Book Finder</div>
+    </header>
+
+    <section class="hero">
+        <h2>Find Your Next Favourite Book</h2>
+        <p>Search books by title, author, or category.</p>
+
+        <form class="search-box" id="searchForm">
+            <input
+                type="search"
+                id="searchInput"
+                placeholder="Search books or authors..."
+                aria-label="Search books or authors"
+            >
+            <button type="submit">Search Books</button>
+        </form>
+    </section>
+
+    <main>
+        <div class="section-heading">
+            <h2>Explore Our Books</h2>
+
+            <select id="category" aria-label="Filter by category">
+                <option value="All">All Categories</option>
+                <option value="Technology">Technology</option>
+                <option value="Programming">Programming</option>
+                <option value="Science">Science</option>
+                <option value="Fiction">Fiction</option>
+                <option value="Education">Education</option>
+            </select>
+        </div>
+
+        <p id="bookCount" aria-live="polite"></p>
+
+        <section class="book-grid" id="bookGrid">
+            <p>Loading books...</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 AVM Library Book Finder. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Sample books for testing the frontend.
+        // Replace these with backend data when your API is ready.
+
+        const books = [
+            {
+                title: "Introduction to Computer Science",
+                author: "John Smith",
+                category: "Technology",
+                year: 2023,
+                icon: "💻",
+                available: true
+            },
+            {
+                title: "JavaScript for Beginners",
+                author: "David Miller",
+                category: "Programming",
+                year: 2024,
+                icon: "📘",
+                available: true
+            },
+            {
+                title: "Python Programming",
+                author: "Mark Lutz",
+                category: "Programming",
+                year: 2022,
+                icon: "🐍",
+                available: false
+            },
+            {
+                title: "The Science of Everything",
+                author: "Robert Wilson",
+                category: "Science",
+                year: 2021,
+                icon: "🔬",
+                available: true
+            },
+            {
+                title: "The Adventures of Tomorrow",
+                author: "Emily Brown",
+                category: "Fiction",
+                year: 2023,
+                icon: "📖",
+                available: true
+            },
+            {
+                title: "Learning Mathematics",
+                author: "Sarah Johnson",
+                category: "Education",
+                year: 2024,
+                icon: "📐",
+                available: false
+            }
+        ];
+
+        const searchInput = document.getElementById("searchInput");
+        const searchForm = document.getElementById("searchForm");
+        const categorySelect = document.getElementById("category");
+        const bookGrid = document.getElementById("bookGrid");
+        const bookCount = document.getElementById("bookCount");
+
+        function displayBooks() {
+            const searchText = searchInput.value
+                .trim()
+                .toLowerCase();
+
+            const selectedCategory = categorySelect.value;
+
+            const filteredBooks = books.filter(function(book) {
+                const matchesSearch =
+                    book.title.toLowerCase().includes(searchText) ||
+                    book.author.toLowerCase().includes(searchText) ||
+                    book.category.toLowerCase().includes(searchText);
+
+                const matchesCategory =
+                    selectedCategory === "All" ||
+                    book.category === selectedCategory;
+
+                return matchesSearch && matchesCategory;
+            });
+
+            bookGrid.innerHTML = "";
+
+            bookCount.textContent =
+                filteredBooks.length +
+                (filteredBooks.length === 1 ? " book found" : " books found");
+
+            if (filteredBooks.length === 0) {
+                bookGrid.innerHTML = `
+                    <div class="empty">
+                        <h3>No books found 📚</h3>
+                        <p>Try another title, author, or category.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filteredBooks.forEach(function(book) {
+                const card = document.createElement("article");
+                card.className = "book-card";
+
+                const cover = document.createElement("div");
+                cover.className = "book-cover";
+                cover.textContent = book.icon;
+                cover.setAttribute("aria-hidden", "true");
+
+                const info = document.createElement("div");
+                info.className = "book-info";
+
+                const title = document.createElement("h3");
+                title.textContent = book.title;
+
+                const author = document.createElement("p");
+                author.textContent = "Author: " + book.author;
+
+                const category = document.createElement("span");
+                category.className = "category-tag";
+                category.textContent = book.category;
+
+                const year = document.createElement("p");
+                year.textContent = "Published: " + book.year;
+
+                const availability = document.createElement("p");
+                availability.className = "availability";
+                availability.textContent = book.available
+                    ? "Available in library"
+                    : "Currently unavailable";
+
+                info.append(title, author, category, year, availability);
+                card.append(cover, info);
+                bookGrid.appendChild(card);
+            });
+        }
+
+        searchForm.addEventListener("submit", function(event) {
+            event.preventDefault();
+            displayBooks();
+        });
+
+        searchInput.addEventListener("input", displayBooks);
+        categorySelect.addEventListener("change", displayBooks);
+
+        displayBooks();
+    </script>
+
+</body>
+</html>
